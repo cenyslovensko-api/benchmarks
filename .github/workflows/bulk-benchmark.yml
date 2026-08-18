@@ -1,0 +1,95 @@
+name: Bulk Upload Benchmark Report
+
+# Reusable workflow — call this after completing a full benchmark suite run.
+# The caller produces a JSON report (conforming to schemas/benchmark-report.schema.json)
+# and passes it as an inline string.  All entries are committed in a single push.
+#
+# Example usage from another repo:
+#
+#   jobs:
+#     benchmark:
+#       runs-on: ubuntu-latest
+#       outputs:
+#         report: ${{ steps.run.outputs.report }}
+#       steps:
+#         - uses: actions/checkout@v4
+#
+#         - name: Run benchmark suite and emit report
+#           id: run
+#           run: |
+#             # Build your report JSON and write it to a file, then capture it.
+#             # The file must match schemas/benchmark-report.schema.json.
+#             python run_benchmarks.py > benchmark-report.json
+#             echo "report=$(cat benchmark-report.json)" >> "$GITHUB_OUTPUT"
+#
+#     upload:
+#       needs: benchmark
+#       uses: <org>/cenyslovensko-benchmarks/.github/workflows/bulk-benchmark.yml@main
+#       with:
+#         report_json: ${{ needs.benchmark.outputs.report }}
+#       secrets:
+#         token: ${{ secrets.BENCHMARKS_REPO_TOKEN }}
+#
+# Tip: to keep the output readable you can also base64-encode the report and
+# decode it inside the workflow — but plain JSON is fine for typical suite sizes.
+
+on:
+  workflow_call:
+    inputs:
+      report_json:
+        description: >
+          Inline JSON string conforming to schemas/benchmark-report.schema.json.
+          Must contain at least: client (string) and benchmarks (array of
+          {name, value, unit}).
+        required: true
+        type: string
+      validate_only:
+        description: "Parse and validate the report without writing data (dry-run)."
+        required: false
+        type: boolean
+        default: false
+    secrets:
+      token:
+        description: >
+          Personal access token (classic) or fine-grained PAT with 'Contents: Read and write'
+          permission on the cenyslovensko-benchmarks repository.
+          Not required when validate_only is true.
+        required: false
+
+jobs:
+  bulk-upload:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout benchmarks repository
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.repository_owner }}/cenyslovensko-benchmarks
+          token: ${{ secrets.token }}
+          ref: main
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Write report to file
+        run: echo '${{ inputs.report_json }}' > /tmp/benchmark-report.json
+
+      - name: Validate report schema
+        run: python scripts/bulk_upload.py /tmp/benchmark-report.json --validate-only
+
+      - name: Ingest benchmark data
+        if: ${{ !inputs.validate_only }}
+        run: python scripts/bulk_upload.py /tmp/benchmark-report.json
+
+      - name: Commit and push
+        if: ${{ !inputs.validate_only }}
+        run: |
+          CLIENT=$(python3 -c "import json,sys; print(json.load(open('/tmp/benchmark-report.json'))['client'])")
+          COUNT=$(python3  -c "import json,sys; print(len(json.load(open('/tmp/benchmark-report.json'))['benchmarks']))")
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs/data/
+          git diff --cached --quiet && echo "Nothing to commit" && exit 0
+          git commit -m "perf(${CLIENT}): bulk upload ${COUNT} benchmark(s) [skip ci]"
+          git push

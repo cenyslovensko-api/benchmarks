@@ -1,0 +1,89 @@
+name: Add Benchmark Data Point
+
+# Reusable workflow — call this from any repository to record a benchmark.
+#
+# Example usage from another repo:
+#
+#   jobs:
+#     benchmark:
+#       uses: <org>/cenyslovensko-benchmarks/.github/workflows/add-benchmark.yml@main
+#       with:
+#         client: python
+#         benchmark_name: api_response_time
+#         value: 145.2
+#         unit: ms
+#         commit_sha: ${{ github.sha }}
+#         repository: ${{ github.repository }}
+#       secrets:
+#         token: ${{ secrets.BENCHMARKS_REPO_TOKEN }}
+
+on:
+  workflow_call:
+    inputs:
+      app:
+        description: "Client/app name (e.g. python, go, rust)"
+        required: true
+        type: string
+      benchmark_name:
+        description: "Benchmark metric name (e.g. api_latency, throughput)"
+        required: true
+        type: string
+      value:
+        description: "Numeric benchmark value"
+        required: true
+        type: number
+      unit:
+        description: "Unit of measurement (e.g. ms, req/s, MB, %)"
+        required: true
+        type: string
+      repository:
+        description: "Source repository in org/repo format (pass ${{ github.repository }})"
+        required: false
+        type: string
+        default: ""
+      commit_sha:
+        description: "Source commit SHA (pass ${{ github.sha }})"
+        required: false
+        type: string
+        default: ""
+    secrets:
+      token:
+        description: >
+          Personal access token (classic) or fine-grained PAT with 'Contents: Read and write'
+          permission on the cenyslovensko-benchmarks repository.
+        required: true
+
+jobs:
+  add-benchmark:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout benchmarks repository
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.repository_owner }}/cenyslovensko-benchmarks
+          token: ${{ secrets.token }}
+          ref: main
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Record benchmark data point
+        run: |
+          python scripts/add_benchmark.py \
+            --client     "${{ inputs.app }}" \
+            --benchmark  "${{ inputs.benchmark_name }}" \
+            --value      "${{ inputs.value }}" \
+            --unit       "${{ inputs.unit }}" \
+            --repository "${{ inputs.repository }}" \
+            --commit     "${{ inputs.commit_sha }}"
+
+      - name: Commit and push
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs/data/
+          git diff --cached --quiet && echo "Nothing to commit" && exit 0
+          git commit -m "perf(${{ inputs.app }}): record ${{ inputs.benchmark_name }} = ${{ inputs.value }} ${{ inputs.unit }} [skip ci]"
+          git push
