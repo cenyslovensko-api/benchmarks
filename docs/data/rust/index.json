@@ -2,7 +2,9 @@
   "benchmarks": [
     "get_version_use_case_execute",
     "handle_unknown_method",
+    "handle_vendor_get",
     "handle_version_get",
+    "http_vendor_source_get_vendor",
     "rpc_request_deserialize",
     "rpc_response_serialize",
     "version_new",
