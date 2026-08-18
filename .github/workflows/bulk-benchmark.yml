@@ -102,8 +102,8 @@ jobs:
           CLIENT=$(python3 -c "import json,sys; print(json.load(open('/tmp/benchmark-report.json'))['client'])")
           COUNT=$(python3  -c "import json,sys; print(len(json.load(open('/tmp/benchmark-report.json'))['benchmarks']))")
           APP_BOT="${{ steps.app_token.outputs.app-slug }}[bot]"
-          APP_BOT_USER_ID=$(curl -fsSL \
-            -H "Authorization: Bearer ${{ steps.app_token.outputs.token }}" \
+          APP_BOT_USER_ID=$(curl -gfsSL \
+            -H "Authorization: ${{ steps.app_token.outputs.token }}" \
             -H "Accept: application/vnd.github+json" \
             "https://api.github.com/users/${APP_BOT}" | python3 -c 'import json,sys; print(json.load(sys.stdin)["id"])')
           git config user.name  "${APP_BOT}"
