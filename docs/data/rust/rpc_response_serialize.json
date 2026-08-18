@@ -1,0 +1,13 @@
+{
+  "name": "rpc_response_serialize",
+  "client": "rust",
+  "entries": [
+    {
+      "timestamp": "2026-08-18T21:27:12Z",
+      "value": 8.610031236065766e-05,
+      "unit": "ms",
+      "repository": "cenyslovensko-api/core",
+      "commit": "3b89d6d"
+    }
+  ]
+}

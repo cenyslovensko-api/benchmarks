@@ -1,0 +1,13 @@
+{
+  "name": "handle_version_get",
+  "client": "rust",
+  "entries": [
+    {
+      "timestamp": "2026-08-18T21:27:12Z",
+      "value": 0.00016315052800155102,
+      "unit": "ms",
+      "repository": "cenyslovensko-api/core",
+      "commit": "3b89d6d"
+    }
+  ]
+}

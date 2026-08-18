@@ -1,0 +1,13 @@
+{
+  "benchmarks": [
+    "get_version_use_case_execute",
+    "handle_unknown_method",
+    "handle_version_get",
+    "rpc_request_deserialize",
+    "rpc_response_serialize",
+    "version_new",
+    "version_to_string",
+    "web_client_build",
+    "web_client_resolve_url"
+  ]
+}
