@@ -28,7 +28,7 @@ name: Bulk Upload Benchmark Report
 #       with:
 #         report_json: ${{ needs.benchmark.outputs.report }}
 #       secrets:
-#         token: ${{ secrets.BENCHMARKS_REPO_TOKEN }}
+#         github_app_private_key: ${{ secrets.BENCHMARKS_GITHUB_APP_PRIVATE_KEY }}
 #
 # Tip: to keep the output readable you can also base64-encode the report and
 # decode it inside the workflow — but plain JSON is fine for typical suite sizes.
@@ -48,23 +48,37 @@ on:
         required: false
         type: boolean
         default: false
+      github_app_id:
+        description: "GitHub App ID used to mint installation tokens"
+        required: false
+        type: string
+        default: "4640297"
     secrets:
-      token:
+      github_app_private_key:
         description: >
-          Personal access token (classic) or fine-grained PAT with 'Contents: Read and write'
-          permission on the cenyslovensko-benchmarks repository.
-          Not required when validate_only is true.
+          GitHub App private key for the cenyslovensko-api app installation
+          with Contents: Read and write on the cenyslovensko-benchmarks repository.
         required: false
 
 jobs:
   bulk-upload:
     runs-on: ubuntu-latest
     steps:
+      - name: Generate GitHub App installation token
+        if: ${{ !inputs.validate_only }}
+        id: app_token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ inputs.github_app_id }}
+          private-key: ${{ secrets.github_app_private_key }}
+          owner: cenyslovensko-api
+          repositories: cenyslovensko-benchmarks
+
       - name: Checkout benchmarks repository
         uses: actions/checkout@v4
         with:
-          repository: ${{ github.repository_owner }}/cenyslovensko-benchmarks
-          token: ${{ secrets.token }}
+          repository: cenyslovensko-api/cenyslovensko-benchmarks
+          token: ${{ inputs.validate_only && github.token || steps.app_token.outputs.token }}
           ref: main
 
       - name: Set up Python

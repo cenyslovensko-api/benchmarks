@@ -15,7 +15,7 @@ name: Add Benchmark Data Point
 #         commit_sha: ${{ github.sha }}
 #         repository: ${{ github.repository }}
 #       secrets:
-#         token: ${{ secrets.BENCHMARKS_REPO_TOKEN }}
+#         github_app_private_key: ${{ secrets.BENCHMARKS_GITHUB_APP_PRIVATE_KEY }}
 
 on:
   workflow_call:
@@ -46,22 +46,36 @@ on:
         required: false
         type: string
         default: ""
+      github_app_id:
+        description: "GitHub App ID used to mint installation tokens"
+        required: false
+        type: string
+        default: "4640297"
     secrets:
-      token:
+      github_app_private_key:
         description: >
-          Personal access token (classic) or fine-grained PAT with 'Contents: Read and write'
-          permission on the cenyslovensko-benchmarks repository.
+          GitHub App private key for the cenyslovensko-api app installation
+          with Contents: Read and write on the cenyslovensko-benchmarks repository.
         required: true
 
 jobs:
   add-benchmark:
     runs-on: ubuntu-latest
     steps:
+      - name: Generate GitHub App installation token
+        id: app_token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ inputs.github_app_id }}
+          private-key: ${{ secrets.github_app_private_key }}
+          owner: cenyslovensko-api
+          repositories: cenyslovensko-benchmarks
+
       - name: Checkout benchmarks repository
         uses: actions/checkout@v4
         with:
-          repository: ${{ github.repository_owner }}/cenyslovensko-benchmarks
-          token: ${{ secrets.token }}
+          repository: cenyslovensko-api/cenyslovensko-benchmarks
+          token: ${{ steps.app_token.outputs.token }}
           ref: main
 
       - name: Set up Python
