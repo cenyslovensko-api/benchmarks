@@ -25,7 +25,7 @@ from _storage import record_entry  # noqa: E402
 
 DATA_DIR_DEFAULT = "docs/data"
 SCHEMA_URL = (
-    "https://raw.githubusercontent.com/cenyslovensko/cenyslovensko-benchmarks"
+    "https://raw.githubusercontent.com/cenyslovensko-api/benchmarks"
     "/main/schemas/benchmark-report.schema.json"
 )
 

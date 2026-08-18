@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://raw.githubusercontent.com/cenyslovensko/cenyslovensko-benchmarks/main/schemas/benchmark-report.schema.json",
+  "$id": "https://raw.githubusercontent.com/cenyslovensko-api/benchmarks/main/schemas/benchmark-report.schema.json",
   "title": "BenchmarkReport",
   "description": "A bulk benchmark report submitted by a single client after completing a full benchmark suite run.",
   "type": "object",

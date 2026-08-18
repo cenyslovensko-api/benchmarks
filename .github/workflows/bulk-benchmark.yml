@@ -24,7 +24,7 @@ name: Bulk Upload Benchmark Report
 #
 #     upload:
 #       needs: benchmark
-#       uses: <org>/cenyslovensko-benchmarks/.github/workflows/bulk-benchmark.yml@main
+#       uses: <org>/benchmarks/.github/workflows/bulk-benchmark.yml@main
 #       with:
 #         report_json: ${{ needs.benchmark.outputs.report }}
 #       secrets:
@@ -57,7 +57,7 @@ on:
       github_app_private_key:
         description: >
           GitHub App private key for the cenyslovensko-api app installation
-          with Contents: Read and write on the cenyslovensko-benchmarks repository.
+          with Contents: Read and write on the benchmarks repository.
         required: false
 
 jobs:
@@ -72,12 +72,12 @@ jobs:
           app-id: ${{ inputs.github_app_id }}
           private-key: ${{ secrets.github_app_private_key }}
           owner: cenyslovensko-api
-          repositories: cenyslovensko-benchmarks
+          repositories: benchmarks
 
       - name: Checkout benchmarks repository
         uses: actions/checkout@v4
         with:
-          repository: cenyslovensko-api/cenyslovensko-benchmarks
+          repository: cenyslovensko-api/benchmarks
           token: ${{ inputs.validate_only && github.token || steps.app_token.outputs.token }}
           ref: main
 

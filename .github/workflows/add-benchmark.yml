@@ -6,7 +6,7 @@ name: Add Benchmark Data Point
 #
 #   jobs:
 #     benchmark:
-#       uses: <org>/cenyslovensko-benchmarks/.github/workflows/add-benchmark.yml@main
+#       uses: <org>/benchmarks/.github/workflows/add-benchmark.yml@main
 #       with:
 #         client: python
 #         benchmark_name: api_response_time
@@ -55,7 +55,7 @@ on:
       github_app_private_key:
         description: >
           GitHub App private key for the cenyslovensko-api app installation
-          with Contents: Read and write on the cenyslovensko-benchmarks repository.
+          with Contents: Read and write on the benchmarks repository.
         required: true
 
 jobs:
@@ -69,12 +69,12 @@ jobs:
           app-id: ${{ inputs.github_app_id }}
           private-key: ${{ secrets.github_app_private_key }}
           owner: cenyslovensko-api
-          repositories: cenyslovensko-benchmarks
+          repositories: benchmarks
 
       - name: Checkout benchmarks repository
         uses: actions/checkout@v4
         with:
-          repository: cenyslovensko-api/cenyslovensko-benchmarks
+          repository: cenyslovensko-api/benchmarks
           token: ${{ steps.app_token.outputs.token }}
           ref: main
 
