@@ -99,6 +99,13 @@
       "unit": "ms",
       "repository": "cenyslovensko-api/core",
       "commit": "5c5c8aa"
+    },
+    {
+      "timestamp": "2026-08-19T07:06:37Z",
+      "value": 9.568205664333916e-05,
+      "unit": "ms",
+      "repository": "cenyslovensko-api/core",
+      "commit": "90bcd22"
     }
   ]
 }

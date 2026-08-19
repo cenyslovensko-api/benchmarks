@@ -7,6 +7,8 @@
     "http_vendor_source_get_vendor",
     "rpc_request_deserialize",
     "rpc_response_serialize",
+    "rpc_server_shutdown_time",
+    "rpc_server_startup_time",
     "version_new",
     "version_to_string",
     "web_client_build",

@@ -1,0 +1,13 @@
+{
+  "name": "rpc_server_shutdown_time",
+  "client": "rust",
+  "entries": [
+    {
+      "timestamp": "2026-08-19T07:06:37Z",
+      "value": 0.0008284201363114554,
+      "unit": "ms",
+      "repository": "cenyslovensko-api/core",
+      "commit": "90bcd22"
+    }
+  ]
+}
