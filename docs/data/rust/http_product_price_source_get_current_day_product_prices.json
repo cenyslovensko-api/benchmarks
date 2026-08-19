@@ -1,0 +1,13 @@
+{
+  "name": "http_product_price_source_get_current_day_product_prices",
+  "client": "rust",
+  "entries": [
+    {
+      "timestamp": "2026-08-19T15:02:34Z",
+      "value": 0.1180578833334384,
+      "unit": "ms",
+      "repository": "cenyslovensko-api/core",
+      "commit": "fced465"
+    }
+  ]
+}

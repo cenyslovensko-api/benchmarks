@@ -1,10 +1,13 @@
 {
   "benchmarks": [
+    "get_current_day_product_prices_use_case_execute",
     "get_version_use_case_execute",
     "handle_unknown_method",
     "handle_vendor_get",
     "handle_version_get",
+    "http_product_price_source_get_current_day_product_prices",
     "http_vendor_source_get_vendor",
+    "product_prices_query_builder_to_query_params",
     "rpc_request_deserialize",
     "rpc_response_serialize",
     "rpc_server_shutdown_time",
